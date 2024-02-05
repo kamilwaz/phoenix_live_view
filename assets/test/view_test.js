@@ -2,6 +2,7 @@ import {Socket} from "phoenix"
 import LiveSocket from "phoenix_live_view/live_socket"
 import DOM from "phoenix_live_view/dom"
 import View from "phoenix_live_view/view"
+import {prependFormDataKey} from "phoenix_live_view/view"
 
 import {
   PHX_LOADING_CLASS,
@@ -192,7 +193,7 @@ describe("View + DOM", function(){
       push(_evt, payload, _timeout){
         expect(payload.type).toBe("form")
         expect(payload.event).toBeDefined()
-        expect(payload.value).toBe("increment=1&note=2&_target=increment")
+        expect(payload.value).toBe("_unused_increment=&increment=1&_unused_note=&note=2&_target=increment")
         return {
           receive(){ return this }
         }
@@ -268,7 +269,7 @@ describe("View + DOM", function(){
       btn.setAttribute("type", "submit")
       btn.setAttribute("name", "btnName")
       btn.setAttribute("value", "btnValue")
-      submitWithButton(btn, "increment=1&note=2&btnName=btnValue")
+      submitWithButton(btn, "increment=1&note=2&_unused_btnName=&btnName=btnValue")
     })
 
     test("payload does not include submitter when name is not provided", function(){
@@ -992,7 +993,13 @@ describe("View + Component", function(){
       validate: "",
       nextValidate(payload){
         this.validate = Object.entries(payload)
-          .map(([key, value]) => `${encodeURIComponent(key)}=${value ? encodeURIComponent(value) : ""}`)
+          .map(([key, value]) => {
+            let unusedKey = prependFormDataKey(key, "_unused_")
+            let unusedPair =`${encodeURIComponent(unusedKey)}=`
+            let pair = `${encodeURIComponent(key)}=${value ? encodeURIComponent(value) : ""}`
+            let input = el.querySelector(`[name="${CSS.escape(key)}"]`)
+            return !input || DOM.private(input, "phx-has-focused") ? pair : `${unusedPair}&${pair}`
+          })
           .join("&")
       },
       push(_evt, payload, _timeout){
@@ -1027,15 +1034,15 @@ describe("View + Component", function(){
 
     let first_name = view.el.querySelector("#first_name")
     let last_name = view.el.querySelector("#last_name")
+    DOM.putPrivate(first_name, "phx-has-focused", true)
     view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "_target": "user[first_name]"})
     // we have to set this manually since it's set by a change event that would require more plumbing with the liveSocket in the test to hook up
-    DOM.putPrivate(first_name, "phx-has-focused", true)
     view.pushInput(first_name, el, null, "validate", {_target: first_name.name})
     expect(el.querySelector(`[phx-feedback-for="${first_name.name}"`).classList.contains("phx-no-feedback")).toBeFalsy()
     expect(el.querySelector(`[phx-feedback-for="${last_name.name}"`).classList.contains("phx-no-feedback")).toBeTruthy()
 
-    view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "_target": "user[last_name]"})
     DOM.putPrivate(last_name, "phx-has-focused", true)
+    view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "_target": "user[last_name]"})
     view.pushInput(last_name, el, null, "validate", {_target: last_name.name})
     expect(el.querySelector(`[phx-feedback-for="${first_name.name}"`).classList.contains("phx-no-feedback")).toBeFalsy()
     expect(el.querySelector(`[phx-feedback-for="${last_name.name}"`).classList.contains("phx-no-feedback")).toBeFalsy()
@@ -1062,7 +1069,13 @@ describe("View + Component", function(){
       validate: "",
       nextValidate(payload){
         this.validate = Object.entries(payload)
-          .map(([key, value]) => `${encodeURIComponent(key)}=${value ? encodeURIComponent(value) : ""}`)
+          .map(([key, value]) => {
+            let unusedKey = prependFormDataKey(key, "_unused_")
+            let unusedPair =`${encodeURIComponent(unusedKey)}=`
+            let pair = `${encodeURIComponent(key)}=${value ? encodeURIComponent(value) : ""}`
+            let input = el.querySelector(`[name="${CSS.escape(key)}"]`)
+            return !input || DOM.private(input, "phx-has-focused") ? pair : `${unusedPair}&${pair}`
+          })
           .join("&")
       },
       push(_evt, payload, _timeout){
@@ -1104,17 +1117,17 @@ describe("View + Component", function(){
     let first_name = view.el.querySelector("#first_name")
     let last_name = view.el.querySelector("#last_name")
     let email = view.el.querySelector("#email")
+    DOM.putPrivate(email, "phx-has-focused", true)
     view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "user[email]": null, "_target": "user[email]"})
     // we have to set this manually since it's set by a change event that would require more plumbing with the liveSocket in the test to hook up
-    DOM.putPrivate(email, "phx-has-focused", true)
     view.pushInput(email, el, null, "validate", {_target: email.name})
     expect(el.querySelector(`[phx-feedback-for="${email.name}"]`).classList.contains("phx-no-feedback")).toBeFalsy()
     expect(el.querySelector(`[phx-feedback-for="${first_name.name}"]`).classList.contains("phx-no-feedback")).toBeTruthy()
     expect(el.querySelector(`[phx-feedback-for="${last_name.name}"]`).classList.contains("phx-no-feedback")).toBeTruthy()
     expect(el.querySelector("[phx-feedback-for=\"mygroup\"]").classList.contains("phx-no-feedback")).toBeTruthy()
 
-    view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "user[email]": null, "_target": "user[first_name]"})
     DOM.putPrivate(first_name, "phx-has-focused", true)
+    view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "user[email]": null, "_target": "user[first_name]"})
     view.pushInput(first_name, el, null, "validate", {_target: first_name.name})
     expect(el.querySelector(`[phx-feedback-for="${first_name.name}"`).classList.contains("phx-no-feedback")).toBeFalsy()
     expect(el.querySelector(`[phx-feedback-for="${last_name.name}"`).classList.contains("phx-no-feedback")).toBeTruthy()
