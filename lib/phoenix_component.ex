@@ -2292,7 +2292,7 @@ defmodule Phoenix.Component do
 
     form_options =
       assigns
-      |> Map.take([:as, :csrf_token, :errors, :method, :multipart, :action])
+      |> Map.take([:as, :csrf_token, :errors, :method, :multipart])
       |> Map.merge(assigns.rest)
       |> Map.to_list()
 
@@ -2313,7 +2313,7 @@ defmodule Phoenix.Component do
             end
           end)
 
-        {[method: method] ++ opts, hidden_method, csrf_token}
+        {[action: action, method: method] ++ opts, hidden_method, csrf_token}
       else
         {opts, nil, nil}
       end
