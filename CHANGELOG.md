@@ -1,5 +1,66 @@
 # Changelog
 
+## 0.20.11 (2024-02-29)
+
+### Bug fixes
+  * Fix auto uploads with invalid entries incorrectly proceeding with a form submit instead of halting, causing entries in progress errors
+  * Fix auto upload entries failing to be uploaded on submit after moving into a valid state, such as falling within `max_entries`
+  * Fix TagEngine clause warning
+
+## 0.20.10 (2024-02-28)
+
+### Bug fixes
+  * Fix cancelled uploads being re-added
+  * Fix form submits for previously submitted invalid upload entries causing errors instead of preflighted new upload entries
+  * Fix HTML formatter not respecting phx-no-format for script tags
+
+### Enhancements
+  * Add additional HEEx debug annotations for the caller locations of function component invocations
+  * Abandon form recovery if recovery event fails
+
+## 0.20.9 (2024-02-19)
+
+### Bug fixes
+  * Fix error in LiveViewTest when a `phx-update="ignore"` container is added dynamically to the DOM
+
+## 0.20.8 (2024-02-19)
+
+### Bug fixes
+  * Fix live uploader issue when a form contained more than one `<.live_file_input>`
+  * Fix phx-remove on re-added stream items trigging the remove when it should not
+  * Fix js error attempting to re-order an element that does not exist in the DOM
+
+### Enhancements
+  * Align LiveViewTest with JavaScript DOM patching behavior for phx-update="ignore" when updating attributes in LiveViewTest
+
+## 0.20.7 (2024-02-15)
+
+### Bug fixes
+  * Fix phx-skip containers leaking into DOM on first patch in some cases (#3117)
+  * Fix phx-feedback-for failing to be properly updated in some cases (#3122)
+
+
+## 0.20.6 (2024-02-14)
+
+### Bug fixes
+  * Fix stream items being excluded in LiveViewTest
+  * Fix stream items failing to properly update nested streams or LiveComponents
+  * Fix debounce/blur regression causing unexpeted events to be sent
+
+## 0.20.5 (2024-02-08)
+
+### Deprecations
+  * Deprecate `phx-feedback-group` introduced in the previous release, the goal is to move feedback handling into Elixir and out of the DOM
+
+### Bug fixes
+  * Fix blur event on phx-debounce being dispatched incorrectly
+  * Fix `open_browser` not working on WSL for project under UNIX file systems
+  * Match browser stream insert ordering behavior in `LiveViewTest`
+  * Fix `phx-click-away` not working when element is partially hidden
+  * Fix `phx-feedback-for` classes not being applied in some cases
+  * Fix form submitter failing to be sent as key/value pair in some cases
+  * Fix null form reference causing errors on some DOM patches
+
 ## 0.20.4 (2024-02-01)
 
 ### Bug fixes
@@ -43,7 +104,7 @@
 ## 0.20.2 (2023-12-18)
 
 ### Bug fixes
-  * Fix javascript error when submitting a form that has in progress uploads
+  * Fix JavaScript error when submitting a form that has in progress uploads
   * Fix JS command `:target` failing to work when used as phx-submit or phx-change with a selector-based target
   * Fix `JS.focus()` failing to focus negative tabindex
   * Fix `LiveViewTest` failing to remove items after stream reset
@@ -52,10 +113,13 @@
 
 ### Enhancements
   * Speed up DOM patching performance 3-30x 🔥
-  * Support `handle_async` Lifecycle callback
+  * Support `handle_async` lifecycle callback
   * Extend visibility checks for phx-click-away to better handle whether an element is visible in the viewport or not
   * Allow `JS.patch` and `JS.navigate` to be tested with `render_click`
   * Support `:supervisor` option to `assign_async` and `start_async`
+
+### Deprecations
+  * Deprecate `phx-update="append"` and `phx-update="prepend"` in favor of `phx-update="stream"`
 
 ## 0.20.1 (2023-10-09)
 
@@ -89,7 +153,7 @@
   * Fix error on form recovery with `auto_upload: true`
   * Fix issue on form recovery where hidden inputs would be selected by mistake
   * Fix form recovery when phx-change is a JS command
-  * Fix stream reset on nested live components with nested streams.
+  * Fix stream reset on nested live components with nested streams
   * Fix window location resetting to null when using nested LiveView on connection error
   * Fix anchors within contenteditable causing LiveSocket disconnects
 

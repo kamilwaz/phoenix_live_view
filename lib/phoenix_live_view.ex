@@ -723,8 +723,10 @@ defmodule Phoenix.LiveView do
 
   ## Options
 
-    * `:accept` - Required. A list of unique file type specifiers or the
-      atom :any to allow any kind of file. For example, `[".jpeg"]`, `:any`, etc.
+    * `:accept` - Required. A list of unique file extensions (such as ".jpeg") or
+      mime type (such as "image/jpeg" or "image/*"). You may also pass the atom
+      `:any` instead of a list to support to allow any kind of file.
+      For example, `[".jpeg"]`, `:any`, etc.
 
     * `:max_entries` - The maximum number of selected files to allow per
       file input. Defaults to 1.
@@ -1398,7 +1400,7 @@ defmodule Phoenix.LiveView do
 
   > Note: This function is for server-side lifecycle callbacks.
   > For client-side hooks, see the
-  > [JS Interop guide](js-interop.html#client-hooks).
+  > [JS Interop guide](js-interop.html#client-hooks-via-phx-hook).
 
   Hooks provide a mechanism to tap into key stages of the LiveView
   lifecycle in order to bind/update assigns, intercept events,
@@ -1504,7 +1506,7 @@ defmodule Phoenix.LiveView do
 
   > Note: This function is for server-side lifecycle callbacks.
   > For client-side hooks, see the
-  > [JS Interop guide](js-interop.html#client-hooks).
+  > [JS Interop guide](js-interop.html#client-hooks-via-phx-hook).
 
   If no hook is found, this function is a no-op.
 
