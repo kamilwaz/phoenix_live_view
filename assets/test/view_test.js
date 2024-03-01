@@ -269,7 +269,7 @@ describe("View + DOM", function(){
       btn.setAttribute("type", "submit")
       btn.setAttribute("name", "btnName")
       btn.setAttribute("value", "btnValue")
-      submitWithButton(btn, "increment=1&note=2&_unused_btnName=&btnName=btnValue")
+      submitWithButton(btn, "increment=1&note=2&btnName=btnValue")
     })
 
     test("payload includes submitter when name is provided (submitter outside form)", function(){
@@ -1054,9 +1054,8 @@ describe("View + Component", function(){
     window.requestAnimationFrame(() => {
       expect(el.querySelector(`[phx-feedback-for="${first_name.name}"`).classList.contains("phx-no-feedback")).toBeFalsy()
       expect(el.querySelector(`[phx-feedback-for="${last_name.name}"`).classList.contains("phx-no-feedback")).toBeTruthy()
-  
+
       view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "_target": "user[last_name]"})
-      DOM.putPrivate(last_name, "phx-has-focused", true)
       view.pushInput(last_name, el, null, "validate", {_target: last_name.name})
       window.requestAnimationFrame(() => {
         expect(el.querySelector(`[phx-feedback-for="${first_name.name}"`).classList.contains("phx-no-feedback")).toBeFalsy()
@@ -1146,7 +1145,6 @@ describe("View + Component", function(){
       expect(el.querySelector("[phx-feedback-for=\"mygroup\"]").classList.contains("phx-no-feedback")).toBeTruthy()
 
       view.channel.nextValidate({"user[first_name]": null, "user[last_name]": null, "user[email]": null, "_target": "user[first_name]"})
-      DOM.putPrivate(first_name, "phx-has-focused", true)
       view.pushInput(first_name, el, null, "validate", {_target: first_name.name})
       window.requestAnimationFrame(() => {
         expect(el.querySelector(`[phx-feedback-for="${first_name.name}"`).classList.contains("phx-no-feedback")).toBeFalsy()
@@ -1217,7 +1215,7 @@ describe("View + Component", function(){
     window.requestAnimationFrame(() => {
       expect(el.querySelector(`span[phx-feedback-for="user[first_name]"`).classList.contains("phx-no-feedback")).toBeFalsy()
       expect(el.querySelector(`span[phx-feedback-for="user[allergies]"`).classList.contains("phx-no-feedback")).toBeTruthy()
-  
+
       DOM.putPrivate(allergies_select, "phx-has-focused", true)
       view.pushInput(allergies_select, el, null, "validate", {_target: "user[allergies][]"})
       window.requestAnimationFrame(() => {
